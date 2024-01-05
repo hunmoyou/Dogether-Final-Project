@@ -14,6 +14,17 @@
   position: relative;
   width: 1500px;
   left: 30px;
+
+  .nothingAnimals {
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -50%);
+    div {
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 45px;
+    }
+  }
 }
 
 // .loading-pink::before {

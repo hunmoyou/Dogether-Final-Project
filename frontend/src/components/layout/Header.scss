@@ -47,24 +47,15 @@
 }
 
 .Dogether {
-  color: #e89b93;
   font-family: 'Courgette', cursive;
   font-size: 55px;
-  text-align: center;
+  display: flex;
+  justify-content: center;
 
-  div:hover {
-    border-bottom: 5px solid #e89b93;
-  }
-}
-
-.Dogether {
-  color: #e89b93;
-  font-family: 'Courgette', cursive;
-  font-size: 55px;
-  text-align: center;
-
-  div:hover {
-    border-bottom: 5px solid #e89b93;
+  a {
+    color: #e89b93;
+    text-decoration: none;
+    width: fit-content;
   }
 }
 

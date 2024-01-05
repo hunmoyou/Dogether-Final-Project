@@ -90,10 +90,13 @@ const AdoptionApplication = () => {
   console.log('폼데이터 정보', formData);
 
   const handleSummit = async (e) => {
-
     // eslint-disable-next-line no-mixed-operators
-    if (score === undefined || score === null || (parseInt(score) < 70 || parseInt(score) === 0))
-    {
+    if (
+      score === undefined ||
+      score === null ||
+      parseInt(score) <= 6 ||
+      parseInt(score) === 0
+    ) {
       e.preventDefault();
       WarningAlert(
         '반려퀴즈 70점 이상 신청 가능합니다.',

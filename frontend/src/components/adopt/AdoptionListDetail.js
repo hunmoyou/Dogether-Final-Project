@@ -17,6 +17,7 @@ const AdoptionListDetail = () => {
 
   const userId = localStorage.getItem('USER_ID');
   const token = localStorage.getItem('ACCESS_TOKEN');
+  const score = localStorage.getItem('SCORE');
 
   // const [profileImgStyle, setProfileImgStyle] = useState({
   //   position: 'relative',
@@ -38,6 +39,13 @@ const AdoptionListDetail = () => {
         // console.error('사용자가 로그인되어 있지 않습니다.');
         // alert('사용자가 로그인되어 있지 않습니다.');
         // 로그인 페이지로 이동하거나 다른 처리를 수행
+        return;
+      } else if (!score || score < 6) {
+        WarningAlert2(
+          '반려 퀴즈 수료 이후에 이용해 주세요',
+          '',
+          '반려 퀴즈 먼저 수료 해 주세요.'
+        );
         return;
       }
 

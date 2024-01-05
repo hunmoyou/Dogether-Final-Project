@@ -46,11 +46,25 @@ const MyPage = () => {
         console.log(err);
       });
   }, []);
-  // 게시물 상세 페이지 이동
-  const toPostDetail = (boardNo) => {
-    console.log('boardNo:', boardNo);
-    const postDetailPath = `${BOARD}/detail/${boardNo}`;
-    navigate(postDetailPath);
+  //게시판 상세보기 요청
+  const boardDetailHandler = (boardNo) => {
+    const token = localStorage.getItem('ACCESS_TOKEN');
+
+    fetch(`${API_BASE_URL}${BOARD}/detail/${boardNo}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        navigate(`${BOARD}/detail/${boardNo}`, {
+          state: { boarddetail: data },
+        });
+        console.log('상세 페이지 데이터:', data);
+      })
+      .catch((error) => {
+        console.error('상세 페이지로 이동 중 에러 발생:', error);
+      });
   };
 
   // 점수에 따라 수료 여부 결정
@@ -115,7 +129,7 @@ const MyPage = () => {
             userPosts.map((post) => (
               <div
                 className='board-content'
-                onClick={() => toPostDetail(post.boardNo)}
+                onClick={() => boardDetailHandler(post.boardNo)}
                 key={post.boardNo}
               >
                 <div className='category'>{post.category}</div>

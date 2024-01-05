@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './AdoptionList.scss';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -15,22 +15,6 @@ import { ADOPT, API_BASE_URL } from '../../global/config/host-config';
 
 const AdoptionList = () => {
   const navigate = useNavigate();
-
-  //클릭시 강아지 상세정보 페이지로 이동
-  // const goAdoptionListDetail = () => {
-  //   navigate(`/adopt/detail/${adoptList.desertionNo}`);
-  // }
-
-  // const [adoptList, setAdoptList ] = useState([
-  //   {
-  //     desertionNo: '',
-  //     kindCd: '',
-  //     gender: '',
-  //     age:'',
-  //     neuterYn: '',
-  //     profileImg:'',
-  //   }
-  // ]);
 
   const [uprCd, setUprCd] = useState('ALL');
 
@@ -57,6 +41,7 @@ const AdoptionList = () => {
 
   const [selectOnline, setSelectOnline] = useState(online[0]);
   const [filteredAdoptList, setFilteredAdoptList] = useState([]);
+  const prevAdoptListRef = useRef(); // 이전 상태를 기억하는 ref
 
   const handleSelectChange = (selectedOption) => {
     setSelectOnline(selectedOption);
@@ -72,9 +57,15 @@ const AdoptionList = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    if (adoptList.length > 0 || filteredAdoptList > 0) {
-      setLoding(false);
+    if (
+      JSON.stringify(prevAdoptListRef.current) !== JSON.stringify(adoptList)
+    ) {
+      if (adoptList.length > 0 || filteredAdoptList > 0) {
+        setLoding(false);
+      }
     }
+    // 현재 상태를 이전 상태에 저장
+    prevAdoptListRef.current = adoptList;
   }, [filteredAdoptList][adoptList]);
 
   // 입양 상세페이지로 요청
@@ -97,10 +88,14 @@ const AdoptionList = () => {
   // 입양 리스트 조건 검색
   useEffect(() => {
     setLoding(true);
+    setFilteredAdoptList();
     axios
       .get(`${API_BASE_URL}${ADOPT}/adminicode?uprCd=${uprCd}`)
       .then((res) => {
         setFilteredAdoptList(res.data.adoptLists);
+      })
+      .then(() => {
+        setLoding(false); // 모든 데이터 로딩이 완료된 후에 로딩 상태를 false로 변경
       })
       .catch((err) => {
         console.error(err);
@@ -109,16 +104,21 @@ const AdoptionList = () => {
 
   useEffect(() => {
     // 입양 리스트 '/adopt 요청'
+    setLoding(true);
     axios
       .get(`${API_BASE_URL}${ADOPT}`)
       .then((res) => {
         console.log(res.data.adoptLists);
         setAdoptList(res.data.adoptLists); //.slice(0,12)
+        // setFilteredAdoptList(res.data.adoptLists);
+      })
+      .then(() => {
+        setLoding(false); // 모든 데이터 로딩이 완료된 후에 로딩 상태를 false로 변경
       })
       .catch((err) => {
         console.error(err);
       });
-  }, [adoptList]);
+  }, []);
 
   // 카테고리 선택에 따른 필터링
   useEffect(() => {
@@ -127,11 +127,11 @@ const AdoptionList = () => {
       setFilteredAdoptList(filteredList);
     } else {
       // 카테고리가 선택되지 않은 경우 전체 목록 표시
-      setAdoptList(adoptList);
+      setFilteredAdoptList(adoptList);
     }
   }, [uprCd, adoptList]);
 
-  console.log('adoptList : axios 후에', adoptList);
+  console.log('입양리스트 : axios 후에', adoptList);
   console.log('filteredAdoptList : axios 후에', adoptList);
 
   const cutAdoptList = adoptList.slice(0, 12);
@@ -141,10 +141,12 @@ const AdoptionList = () => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const handleClick = (page) => {
-    if (loading) {
-      // 로딩 중일 때는 클릭 이벤트를 무시
-      return;
-    }
+    setLoding(true);
+
+    setTimeout(() => {
+      setLoding(false);
+      setCurrentPage(page);
+    }, 600); // 1000ms = 1초
     setCurrentPage(page);
   };
 
@@ -209,25 +211,31 @@ const AdoptionList = () => {
                 ></input>
               </label>
             </form>
-            {paginatedData.map((item, index) => (
-              <div
-                key={index}
-                className={`frame-${index + 1}`}
-                onClick={() => goAdoptionListDetail(item.desertionNo)}
-              >
-                <img
-                  className={`image-${index + 1}`}
-                  src={item.profileImg}
-                  alt={`dogImg ${index + 1}`}
-                />
-                <div className={`frameInfo-${index + 1}`}>
-                  견종: {item.kindCd} <br />
-                  성별: {item.gender} <br />
-                  나이: {item.age} <br />
-                  중성화여부: {item.neuterYn}
-                </div>
+            {paginatedData.length === 0 && filteredAdoptList.length !== 0 ? (
+              <div className='nothingAnimals'>
+                <div>조회된 동물들이 하나도 없습니다.</div>
               </div>
-            ))}
+            ) : (
+              paginatedData.map((item, index) => (
+                <div
+                  key={index}
+                  className={`frame-${index + 1}`}
+                  onClick={() => goAdoptionListDetail(item.desertionNo)}
+                >
+                  <img
+                    className={`image-${index + 1}`}
+                    src={item.profileImg}
+                    alt={`dogImg ${index + 1}`}
+                  />
+                  <div className={`frameInfo-${index + 1}`}>
+                    견종: {item.kindCd} <br />
+                    성별: {item.gender} <br />
+                    나이: {item.age} <br />
+                    중성화여부: {item.neuterYn}
+                  </div>
+                </div>
+              ))
+            )}
             <div className='pageNum'>
               <Stack spacing={2}>
                 <Pagination

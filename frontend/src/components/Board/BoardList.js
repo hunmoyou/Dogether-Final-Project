@@ -31,8 +31,9 @@ const BoardList = () => {
     };
 
     fetchData();
+    console.log('유저 아이디', userId);
   }, []);
-  const userId = localStorage.getItem('LOGIN_USERID');
+  const userId = localStorage.getItem('USER_ID');
 
   const BoardRegist = () => {
     if (!userId) {

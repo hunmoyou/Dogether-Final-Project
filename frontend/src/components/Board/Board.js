@@ -3,6 +3,7 @@ import './Board.scss'; // SCSS 파일 import
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL, BOARD } from '../../global/config/host-config';
 import Swal from 'sweetalert2';
+import { WarningAlert2 } from '../../global/Alerts';
 
 const API_URL = `${API_BASE_URL}${BOARD}/regist`;
 
@@ -134,7 +135,7 @@ const Board = () => {
       fileExt !== 'jpeg' &&
       fileExt !== 'gif'
     ) {
-      alert('이미지 파일 (jpg, png, jpeg, gif)만 등록 가능합니다.');
+      WarningAlert2('이미지 파일 (jpg, png, jpeg, gif)만 등록 가능합니다.');
       $fileTag.current.value = '';
       return;
     }

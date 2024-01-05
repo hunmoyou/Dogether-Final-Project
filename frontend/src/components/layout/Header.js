@@ -42,7 +42,7 @@ const Header = () => {
 
   // 로그인 상태가 바뀔때마다
   useEffect(() => {
-    // console.log('상태변경', isLoggedIn);
+    console.log('상태변경', isLoggedIn);
   }, [isLoggedIn]); // 로그인 상태가 바뀔때마다
 
   return (
@@ -71,9 +71,11 @@ const Header = () => {
             )}
           </ul>
         </div>
-        <Link to={'/'}>
-          <div className='Dogether'>Dogether</div>
-        </Link>
+        <div className='Dogether'>
+          <Link to={'/'}>
+            <div>Dogether</div>
+          </Link>
+        </div>
         <div className='HeaderContainer2'>
           <ul>
             <li>

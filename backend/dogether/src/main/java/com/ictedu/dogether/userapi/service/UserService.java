@@ -228,7 +228,7 @@ public class UserService {
         RestTemplate template = new RestTemplate();
         ResponseEntity<KakaoUserDTO> responseEntity = template.exchange(requestUri, HttpMethod.GET,
                 new HttpEntity<>(headers), KakaoUserDTO.class);
-        log.info("responseEntity-{}", responseEntity);
+        log.info("\n\n\n카카오토큰 이용한 유저 정보 요청 responseEntity-{}", responseEntity);
         // 응답 바디 읽기
         KakaoUserDTO responseData = responseEntity.getBody();
         log.info("user profile: {}", responseData);
@@ -265,8 +265,7 @@ public class UserService {
         // param3: 헤더와 요청 파라미터정보 엔터티
         // param4: 응답 데이터를 받을 객체의` 타입 (ex: dto, map)
         // 만약 구조가 복잡한 경우에는 응답 데이터 타입을 String으로 받아서 JSON-simple 라이브러리로 직접 해체.
-        ResponseEntity<Map> responseEntity = template.exchange(requestUri, HttpMethod.POST, requestEntity, Map.class);
-
+        ResponseEntity<?> responseEntity = template.exchange(requestUri, HttpMethod.POST, requestEntity, Map.class);
         // 응답 데이터에서 필요한 정보를 가져오기
         Map<String, Object> responseData = (Map<String, Object>) responseEntity.getBody();
         log.info("토큰 요청 응답 데이터: {}", responseData);
